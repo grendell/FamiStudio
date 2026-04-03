@@ -1423,7 +1423,7 @@ famistudio_music_stop::
     sta famistudio_dpcm_music_loop
 .endif
 
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_CHANNELS - 1)
 
 .famistudio_music_stop_set_channels:
 
@@ -1445,39 +1445,35 @@ famistudio_music_stop::
         sta famistudio_chn_cut_delay,x
         lda #0
     .endif
-    inx
-    cpx #FAMISTUDIO_NUM_CHANNELS
-    bne .famistudio_music_stop_set_channels
+    dex
+    bpl .famistudio_music_stop_set_channels
 
 .if FAMISTUDIO_USE_DUTYCYCLE_EFFECT
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_DUTY_CYCLES - 1)
 .set_duty_cycles:
     sta famistudio_duty_cycle,x
-    inx
-    cpx #FAMISTUDIO_NUM_DUTY_CYCLES
-    bne .set_duty_cycles
+    dex
+    bpl .set_duty_cycles
 .endif
 
 .if FAMISTUDIO_USE_SLIDE_NOTES
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_SLIDES - 1)
 .set_slides:
     sta famistudio_slide_step, x
-    inx
-    cpx #FAMISTUDIO_NUM_SLIDES
-    bne .set_slides
+    dex
+    bpl .set_slides
 .endif
 
 .if FAMISTUDIO_USE_VOLUME_SLIDES
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_VOLUME_SLIDES - 1)
 .set_volume_slides:
     sta famistudio_chn_volume_slide_step, x
     sta famistudio_chn_volume_slide_target, x
-    inx
-    cpx #FAMISTUDIO_NUM_VOLUME_SLIDES
-    bne .set_volume_slides
+    dex
+    bpl .set_volume_slides
 .endif
 
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_ENVELOPES - 1)
 
 .set_envelopes:
 
@@ -1489,11 +1485,10 @@ famistudio_music_stop::
     sta famistudio_env_repeat,x
     sta famistudio_env_value,x
     sta famistudio_env_ptr,x
-    inx
-    cpx #FAMISTUDIO_NUM_ENVELOPES
-    bne .set_envelopes
+    dex
+    bpl .set_envelopes
 
-    ldx #0
+    ldx #(FAMISTUDIO_NUM_PITCH_ENVELOPES - 1)
 .set_pitch_envelopes:
 
     lda #<famistudio_dummy_pitch_envelope
@@ -1509,9 +1504,8 @@ famistudio_music_stop::
     .endif
     lda #1
     sta famistudio_pitch_env_ptr,x
-    inx
-    cpx #FAMISTUDIO_NUM_PITCH_ENVELOPES
-    bne .set_pitch_envelopes
+    dex
+    bpl .set_pitch_envelopes
 
     jmp famistudio_sample_stop
 
@@ -2047,7 +2041,7 @@ famistudio_get_note_pitch_vrc6_saw:
 
     lda famistudio_chn_note+idx
     bne .nocut
-    jmp .set_volume
+    beq .set_volume
 
 .nocut:
     clc
