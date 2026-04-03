@@ -6564,7 +6564,6 @@ famistudio_sample_stop:
 @stop_dpcm:
     lda #%00001111
     sta FAMISTUDIO_APU_SND_CHN
-
     rts
 
     
